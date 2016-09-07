@@ -98,5 +98,4 @@ if __name__ == '__main__':
 
     hc.load_all_documents()
     print(len(hc.get_all_documents()))
-
-
+    print(hc.get_all_documents()[:2])
