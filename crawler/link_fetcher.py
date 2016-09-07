@@ -1,7 +1,7 @@
 import time
 import re
 from datetime import timedelta
-from crawler.links_params import links
+from crawler.links_params import links, cast_params
 
 try:
     from HTMLParser import HTMLParser
@@ -101,7 +101,9 @@ class LinkFetcher:
                         collection_lock.acquire()
                         collection.add(new_url)  # possible asynchronous access to synchronous object
                         collection_lock.release()
-                    elif re.search(self._page_pattern, new_url) and re.match(self._base_fetch_url, new_url):
+                    elif re.search(self._page_pattern, new_url) and re.match(
+                            self._base_fetch_url if not self._base_fetch_url.endswith(
+                                    '.html') else self._base_fetch_url[:-5], new_url):
                         yield q.put(new_url)
 
             finally:
@@ -124,9 +126,17 @@ class LinkFetcher:
 
         self._links = list(collection)
 
-if __name__ == '__main__':
-    l_f = LinkFetcher(links['olx']['start_url'], links['olx']['base_url'], links['olx']['offer_pattern'],
-                      links['olx']['page_pattern'], {'city': 'poznan', 'type': 'domy', 'offer_type': 'wynajem'})
 
-    l_f.process()
-    print(l_f.get_collected_links())
+if __name__ == '__main__':
+    params = {'city': 'poznan', 'type': 'domy', 'offer_type': 'rent', 'voivodeship': 'wielkopolskie'}
+    all_links = []
+
+    for page in ['olx', 'gratka']:
+        l_f = LinkFetcher(links[page]['start_url'], links[page]['base_url'], links[page]['offer_pattern'],
+                          links[page]['page_pattern'], cast_params(page, **params))
+
+        l_f.process()
+        all_links += l_f.get_collected_links()
+
+    print(all_links[0])
+    print(all_links[-1])
