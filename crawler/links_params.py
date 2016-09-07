@@ -91,19 +91,19 @@ gumtree_location_codes = {'czeladz': 'l3200547', 'podkarpackie': 'l32000', 'bial
                           'poludniowe-powiaty': 'l3200042'}
 
 
-def cast_params(page, type, offer_type, city, voivodeship):
+def cast_params(page, estate_type, offer_type, city, voivodeship):
     try:
         if page == 'olx':
-            return {'type': type, 'offer_type': offer_type_dict[page][offer_type],
+            return {'type': estate_type, 'offer_type': offer_type_dict[page][offer_type],
                     'city': city if city is not None else voivodeship}
         elif page == 'gratka':
-            return {'type': type, 'offer_type': offer_type_dict[page][offer_type],
+            return {'type': estate_type, 'offer_type': offer_type_dict[page][offer_type],
                     'city': '{},{}'.format(voivodeship, city).lower()}
         elif page == 'gumtree':
-            return {'type': 'mieszkanie' if type == 'mieszkania' else 'dom', 'city': city,
+            return {'type': 'mieszkanie' if estate_type == 'mieszkania' else 'dom', 'city': city,
                     'code': gumtree_code_generator(voivodeship, city)}
         elif page == 'otodom':
-            return {'type': 'mieszkanie' if type == 'mieszkania' else 'dom',
+            return {'type': 'mieszkanie' if estate_type == 'mieszkania' else 'dom',
                     'city': city if city is not None else voivodeship,
                     'offer_type': offer_type_dict[page][offer_type]}
         else:
@@ -116,6 +116,6 @@ def gumtree_code_generator(voivodeship, city):
     basic = 'v1c9008a1dwp1'
 
     if city is None:
-        return basic[:7] + gumtree_location_codes[voivodeship] + basic[-6:]
+        return basic[:7] + gumtree_location_codes[voivodeship.lower()] + basic[-6:]
     else:
-        return basic[:7] + gumtree_location_codes[city] + basic[-6:]
+        return basic[:7] + gumtree_location_codes[city.lower()] + basic[-6:]

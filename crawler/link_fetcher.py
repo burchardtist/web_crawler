@@ -139,7 +139,7 @@ if __name__ == '__main__':
     params = {'city': 'poznan', 'type': 'domy', 'offer_type': 'rent', 'voivodeship': 'wielkopolskie'}
     all_links = []
 
-    for page in ['otodom']:  # '['olx', 'gratka', 'gumtree', 'otodom']:
+    for page in ['olx', 'gratka', 'gumtree', 'otodom']:
         l_f = LinkFetcher(links[page]['start_url'], links[page]['base_url'], links[page]['offer_pattern'],
                           links[page]['page_pattern'], cast_params(page, **params), verbose=0)
 
