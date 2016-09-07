@@ -32,9 +32,9 @@ class GumtreeRoom:
         'animals': 9,
     }
 
-    def __init__(self, url):
+    def __init__(self, url, from_url=True):
         self.url = url
-        soup = BeautifulSoup(urllib.request.urlopen(self.url), 'html.parser')
+        soup = BeautifulSoup(urllib.request.urlopen(self.url) if from_url else self.url, 'html.parser')
 
         raw_attributes = soup.select('.selMenu .attribute')
         for attr, i in self.attributes_types.items():
@@ -92,9 +92,9 @@ class OlxRoom:
             'user': ''
     }
 
-    def __init__(self, url):
+    def __init__(self, url, from_url=True):
         self.url = url
-        soup = BeautifulSoup(urllib.request.urlopen(self.url), 'html.parser')
+        soup = BeautifulSoup(urllib.request.urlopen(self.url) if from_url else self.url, 'html.parser')
 
         raw_items = soup.select('.item')
 

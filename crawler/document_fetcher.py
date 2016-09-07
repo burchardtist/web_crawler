@@ -39,7 +39,10 @@ class HtmlFetcher:
     def get_all_documents(self):
         return self._html_list
 
-    def load_all_documents(self):
+    def load_all_documents(self, url_list=None):
+        if url_list is not None:
+            self._url_list = url_list
+
         io_loop = ioloop.IOLoop.current()
         io_loop.run_sync(self._get_all_documents)
 

@@ -8,7 +8,7 @@ class TfidfSimilarity:
         self._matrix = None
 
     def analyze_documents(self, document_set):
-        tf_idf = TfidfVectorizer(ngram_range=(1, 2))
+        tf_idf = TfidfVectorizer(ngram_range=(1, 3))
 
         self._matrix = tf_idf.fit_transform(document_set)
         self._matrix = np.dot(self._matrix, self._matrix.T)
