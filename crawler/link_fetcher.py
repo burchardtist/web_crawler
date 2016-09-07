@@ -14,7 +14,7 @@ from tornado import httpclient, gen, ioloop, queues, locks
 
 
 class LinkFetcher:
-    def __init__(self, base_fetch_url, base_url, offer_pattern, page_pattern, params, concurrency=4):
+    def __init__(self, base_fetch_url, base_url, offer_pattern, page_pattern, params, concurrency=4, verbose=0):
         self._base_fetch_url = base_fetch_url.format(**params)
 
         if params.get('offer_type', None) == 'all':
@@ -25,10 +25,12 @@ class LinkFetcher:
         self._gumtree = 'code' in params
 
         self._offer_pattern = offer_pattern
-        self._page_pattern = page_pattern
+        self._page_pattern = page_pattern.format(**params)
 
         self._links = []
         self._concurrency = concurrency
+
+        self._verbose = verbose
 
     def get_collected_links(self):
         return self._links
@@ -43,7 +45,8 @@ class LinkFetcher:
         """
         try:
             response = yield httpclient.AsyncHTTPClient().fetch(url)
-            print('fetched %s' % url)
+            if self._verbose:
+                print('fetched %s' % url)
 
             html = response.body if isinstance(response.body, str) \
                 else response.body.decode()
@@ -92,7 +95,9 @@ class LinkFetcher:
                 if current_url in fetching:
                     return
 
-                print('fetching %s' % current_url)
+                if self._verbose:
+                    print('fetching %s' % current_url)
+
                 fetching.add(current_url)
                 urls = yield self.get_links_from_url(current_url)
                 fetched.add(current_url)
@@ -103,7 +108,8 @@ class LinkFetcher:
                         collection_lock.acquire()
                         collection.add(new_url)  # possible asynchronous access to synchronous object
                         collection_lock.release()
-                    elif re.search(self._page_pattern, new_url) and (re.match(
+
+                    if re.search(self._page_pattern, new_url) and (re.match(
                             self._base_fetch_url if not self._base_fetch_url.endswith(
                                     '.html') else self._base_fetch_url[:-5], new_url) if not self._gumtree else re.search('[a-z0-9]+$', new_url)):
                         yield q.put(new_url)
@@ -123,8 +129,8 @@ class LinkFetcher:
             worker()
         yield q.join(timeout=timedelta(seconds=300))
         assert fetching == fetched
-        print('Done in %d seconds, fetched %s URLs.' % (
-            time.time() - start, len(fetched)))
+        if self._verbose:
+            print('Done in %d seconds, fetched %s URLs.' % (time.time() - start, len(fetched)))
 
         self._links = list(collection)
 
@@ -133,12 +139,13 @@ if __name__ == '__main__':
     params = {'city': 'poznan', 'type': 'domy', 'offer_type': 'rent', 'voivodeship': 'wielkopolskie'}
     all_links = []
 
-    for page in ['olx', 'gratka', 'gumtree']:
+    for page in ['otodom']:  # '['olx', 'gratka', 'gumtree', 'otodom']:
         l_f = LinkFetcher(links[page]['start_url'], links[page]['base_url'], links[page]['offer_pattern'],
-                          links[page]['page_pattern'], cast_params(page, **params))
+                          links[page]['page_pattern'], cast_params(page, **params), verbose=0)
 
         l_f.process()
         all_links += l_f.get_collected_links()
+        print(len(all_links))
 
     print(all_links[0])
     print(all_links[-1])

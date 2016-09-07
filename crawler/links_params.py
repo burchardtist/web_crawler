@@ -12,7 +12,12 @@ links = {'olx':
              {'start_url': 'http://www.gumtree.pl/s-mieszkania-i-domy-do-wynajecia/{city}/{type}/{code}',
               'base_url': 'http://www.gumtree.pl',
               'offer_pattern': 'a-mieszkania-i-domy-do-wynajecia',
-              'page_pattern': '/page-\d+/'}
+              'page_pattern': '/page-\d+/'},
+         'otodom':
+             {'start_url': 'https://otodom.pl/{offer_type}/{type}/{city}/',
+              'base_url': 'https://otodom.pl/',
+              'offer_pattern': '/oferta/',
+              'page_pattern': '{city}/\?page=\d+$'}
          }
 
 offer_type_dict = {'olx':
@@ -23,6 +28,10 @@ offer_type_dict = {'olx':
                    'gratka':
                        {'rent': 'do-wynajecia',
                         'sell': 'sprzedam'
+                        },
+                   'otodom':
+                       {'rent': 'wynajem',
+                        'sell': 'sprzedaz'
                         }
                    }
 
@@ -85,13 +94,20 @@ gumtree_location_codes = {'czeladz': 'l3200547', 'podkarpackie': 'l32000', 'bial
 def cast_params(page, type, offer_type, city, voivodeship):
     try:
         if page == 'olx':
-            return {'type': type, 'offer_type': offer_type_dict[page][offer_type], 'city': city}
+            return {'type': type, 'offer_type': offer_type_dict[page][offer_type],
+                    'city': city if city is not None else voivodeship}
         elif page == 'gratka':
             return {'type': type, 'offer_type': offer_type_dict[page][offer_type],
                     'city': '{},{}'.format(voivodeship, city).lower()}
         elif page == 'gumtree':
             return {'type': 'mieszkanie' if type == 'mieszkania' else 'dom', 'city': city,
                     'code': gumtree_code_generator(voivodeship, city)}
+        elif page == 'otodom':
+            return {'type': 'mieszkanie' if type == 'mieszkania' else 'dom',
+                    'city': city if city is not None else voivodeship,
+                    'offer_type': offer_type_dict[page][offer_type]}
+        else:
+            raise ValueError("Unknown webpage.")
     except KeyError:
         raise ValueError("Given offer type not supported for chosen webpage.")
 
