@@ -12,7 +12,7 @@ def check_documents(request):
     voivodeship = request.params.get('voivodeship', None)
     offer_type = request.params.get('offer_type', 'rent')
     estate_type = request.params.get('estate_type', 'mieszkania')
-    
+
 
     if offer_type not in ['rent', 'sell', 'all'] or estate_type not in ['mieszkania', 'domy'] or (city is None and voivodeship is None):
         return Response('Bad request')
