@@ -17,10 +17,12 @@ class LinkFetcher:
     def __init__(self, base_fetch_url, base_url, offer_pattern, page_pattern, params, concurrency=4):
         self._base_fetch_url = base_fetch_url.format(**params)
 
-        if params['offer_type'] == 'all':
+        if params.get('offer_type', None) == 'all':
             self._base_fetch_url = self._base_fetch_url.replace('/all', '')
 
         self._base_url = base_url
+
+        self._gumtree = 'code' in params
 
         self._offer_pattern = offer_pattern
         self._page_pattern = page_pattern
@@ -101,9 +103,9 @@ class LinkFetcher:
                         collection_lock.acquire()
                         collection.add(new_url)  # possible asynchronous access to synchronous object
                         collection_lock.release()
-                    elif re.search(self._page_pattern, new_url) and re.match(
+                    elif re.search(self._page_pattern, new_url) and (re.match(
                             self._base_fetch_url if not self._base_fetch_url.endswith(
-                                    '.html') else self._base_fetch_url[:-5], new_url):
+                                    '.html') else self._base_fetch_url[:-5], new_url) if not self._gumtree else re.search('[a-z0-9]+$', new_url)):
                         yield q.put(new_url)
 
             finally:
@@ -131,7 +133,7 @@ if __name__ == '__main__':
     params = {'city': 'poznan', 'type': 'domy', 'offer_type': 'rent', 'voivodeship': 'wielkopolskie'}
     all_links = []
 
-    for page in ['olx', 'gratka']:
+    for page in ['olx', 'gratka', 'gumtree']:
         l_f = LinkFetcher(links[page]['start_url'], links[page]['base_url'], links[page]['offer_pattern'],
                           links[page]['page_pattern'], cast_params(page, **params))
 
