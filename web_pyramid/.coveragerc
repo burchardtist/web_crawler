@@ -1,0 +1,3 @@
+[run]
+source = web_pyramid
+omit = web_pyramid/test*
