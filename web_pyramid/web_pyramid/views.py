@@ -7,7 +7,7 @@ import json
 def home_view(request):
     sources = ['olx', 'gumtree', 'otodom', 'gratka']
     offer_type = ['rent', 'sell']
-    estate_type = ['dom', 'mieszkanie']
+    estate_type = ['domy', 'mieszkania']
 
     return {
         'sources': sources,
