@@ -4,7 +4,7 @@ import re
 from ..crawler.document_fetcher import HtmlFetcher
 from ..crawler.link_fetcher import LinkFetcher
 from ..crawler.links_params import links, cast_params
-from ..room_ad.room_ad import OlxRoom, GumtreeRoom
+from ..room_ad.room_ad import OlxRoom, GumtreeRoom, OtodomRoom
 
 from ..nlp_analyzer.tfidf_analyzer import TfidfSimilarity
 
@@ -76,6 +76,14 @@ class Analyzer:
                 for html in async_html_fetch.get_all_documents():
                     try:
                         self._rooms.append(GumtreeRoom(html['html'], False).attributes)
+                        url_list.append(html['url'])
+                    except:
+                        continue
+            elif source == 'otodom':
+                async_html_fetch.load_all_documents(self._url_list[source])
+                for html in async_html_fetch.get_all_documents():
+                    try:
+                        self._rooms.append(OtodomRoom(html['html'], False).attributes)
                         url_list.append(html['url'])
                     except:
                         continue
@@ -161,11 +169,11 @@ def tt(ndlist):
 
 if __name__ == '__main__':
     a = Analyzer()
-    load = True
+    load = False
 
     if not load:
         print('Collecting links...')
-        a.get_links(['olx', 'gumtree'], 'rent', 'mieszkania', 'Poznan', 'wielkopolskie')
+        a.get_links(['olx', 'gumtree', 'otodom'], 'rent', 'mieszkania', 'Poznan', 'wielkopolskie')
         print('Getting rooms')
         a.get_rooms_async()
 

@@ -4,6 +4,14 @@ import re
 from datetime import datetime
 
 
+def to_float(s):
+    s = re.search('(\d+\s+)*\d+[.,]?\d{0,2}', s).group(0)
+    s = re.sub('\s+', '', s)
+    s = re.sub(',', '.', s)
+
+    return float(s)
+
+
 class GumtreeRoom:
     attributes_types = {
         'date_created': 0,
@@ -130,9 +138,52 @@ class OlxRoom:
         self.attributes['description'] = soup.select('#textContent')[0].getText().lower().strip()
 
 
-if __name__ == '__main__':
-    url_ = 'http://www.gumtree.pl/a-mieszkania-i-domy-do-wynajecia/krakow/super-oferta-3+pokojowe-69-m2-ip-ul-turka-ok-saska-lipska-piekne-i-zadbane/1001721891170910514696009'
-    gt = GumtreeRoom(url_)
+class OtodomRoom:
+    def __init__(self, url, from_url=True):
+        self.attributes = {
+            'date_created': None,
+            'city': '',
+            'city_v': '',
+            'street': '',
+            'date_available': None,
+            'rooms_number': '',
+            'size': '',
+            'smoking': None,
+            'animals': None,
 
-    url_ = 'http://olx.pl/oferta/mieszkania-blisko-pg-i-gumed-2-niezalezne-pokoje-gdansk-brzezno-CID3-IDh3gTw.html#2244b69db2;promoted'
-    olx = OlxRoom(url_)
+            'description': '',
+            'price': '',
+            'title': '',
+            'user': ''
+        }
+
+        self.url = url
+        soup = BeautifulSoup(urllib.request.urlopen(self.url) if from_url else self.url, 'html.parser')
+
+        self.attributes['description'] = soup.select('.text-contents')
+        self.attributes['description'] = self.attributes['description'][0].text
+        self.attributes['description'] = re.sub('\s+', ' ', self.attributes['description'])
+
+        num_attributes = soup.select('.main-list')[0].text
+        num_attributes = num_attributes.split('\n')
+
+        for na in num_attributes:
+            if na.startswith('cena'):
+                self.attributes['price'] = to_float(na)
+            elif na.startswith('powierzchnia'):
+                self.attributes['size'] = to_float(na)
+            elif na.startswith('liczba pokoi'):
+                self.attributes['rooms_number'] = int(re.search('\d+', na).group(0))
+
+        # TODO other, unused currently attributes
+
+
+if __name__ == '__main__':
+    # url_ = 'http://www.gumtree.pl/a-mieszkania-i-domy-do-wynajecia/krakow/super-oferta-3+pokojowe-69-m2-ip-ul-turka-ok-saska-lipska-piekne-i-zadbane/1001721891170910514696009'
+    # gt = GumtreeRoom(url_)
+
+    # url_ = 'http://olx.pl/oferta/mieszkania-blisko-pg-i-gumed-2-niezalezne-pokoje-gdansk-brzezno-CID3-IDh3gTw.html#2244b69db2;promoted'
+    # olx = OlxRoom(url_)
+
+    url_ = 'https://otodom.pl/oferta/piatkowo-batorego-63-1m-ii-pietro-bez-posrednikow-ID3133O.html#465ffef225'
+    od = OtodomRoom(url_)
