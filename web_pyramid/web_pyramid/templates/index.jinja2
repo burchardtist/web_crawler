@@ -1,0 +1,55 @@
+{% extends 'layout.jinja2' %}
+{% block title %}{% endblock title %}
+{% block content %}
+<form method="GET" action={{"fetcher"|route_url()}}>
+  <div class="form-group">
+    <label for="sources">Sources</label>
+    <select id="sources" name="sources" class="form-control" multiple>
+      {% for source in sources: %}
+        <option value="{{source}}">{{source}}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="offer_type">Offer type</label>
+    <select id="offer_type" name="offer_type" class="form-control">
+      {% for offer in offer_type: %}
+        <option value="{{offer}}">{{offer}}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="estate_type">Estate type</label>
+    <select name="estate_type" id="estate_type" class="form-control">
+      {% for estate in estate_type: %}
+        <option value="{{estate}}">{{estate}}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="city">City</label>
+    <input type="text" class="form-control" id="city" name="city" value="poznan">
+  </div>
+  <div class="form-group">
+    <label for="voivodeship">Voivodeship</label>
+    <input type="text" class="form-control" id="voivodeship" name="voivodeship" value="wielkopolskie">
+  </div>
+  <div class="form-group">
+    <label for="sim_thre">Similarity threshold</label>
+    <input type="text" class="form-control" id="similarity_threshold" name="similarity_threshold">
+  </div>
+  <div class="form-group">
+    <label for="room_diff">Room difference</label>
+    <input type="text" class="form-control" id="room_difference" name="room_difference">
+  </div>
+  <div class="form-group">
+    <label for="size_dfiff">Size difference</label>
+    <input type="text" class="form-control" id="size_difference" name="size_difference">
+  </div>
+  <div class="form-group">
+    <label for="price_diff">Price difference</label>
+    <input type="text" class="form-control" id="price_difference" name="price_difference">
+  </div>
+  <button type="submit" class="btn btn-primary" name="form.submitted">Submit</button>
+</form>
+{% endblock content %}
