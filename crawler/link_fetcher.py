@@ -136,7 +136,7 @@ class LinkFetcher:
 
 
 if __name__ == '__main__':
-    params = {'city': 'poznan', 'type': 'domy', 'offer_type': 'rent', 'voivodeship': 'wielkopolskie'}
+    params = {'city': 'poznan', 'estate_type': 'domy', 'offer_type': 'rent', 'voivodeship': 'wielkopolskie'}
     all_links = {}
 
     for page in ['olx', 'gratka', 'gumtree', 'otodom']:
