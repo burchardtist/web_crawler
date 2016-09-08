@@ -6,11 +6,11 @@ from web_pyramid.web_pyramid.app_logic.similarity.analyzer import Analyzer, tt
 
 if __name__ == '__main__':
     a = Analyzer()
-    load = True
+    load = False
 
     if not load:
         print('Collecting links...')
-        a.get_links(['olx', 'gumtree'], 'rent', 'mieszkania', 'Poznan', 'wielkopolskie')
+        a.get_links(['olx', 'gumtree', 'otodom'], 'rent', 'mieszkania', 'Poznan', 'wielkopolskie')
         # , 'gumtree', 'otodom', 'gratka'
         print('Getting rooms')
         a.get_rooms_async()
