@@ -1,0 +1,9 @@
+{% if submitted: %}
+<ul class="no_bullet">
+  {% for link in links: %}
+  <li><a href="{{link[0]}}">{{link[0]}}</a></li>
+  {% endfor %}
+</ul>
+{% else: %}
+  {{ links }}
+{% endif %}
