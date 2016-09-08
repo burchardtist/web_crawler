@@ -188,6 +188,13 @@ class Analyzer:
                   self._rooms[pair[1]]['price'], self._rooms[pair[0]]['size'], self._rooms[pair[1]]['size'],
                   self._rooms[pair[0]]['rooms_number'], self._rooms[pair[1]]['rooms_number'])
 
+    def get_lists(self):
+        return self._rooms, self._url_list
+
+    def set_lists(self, rooms, urls):
+        self._rooms = rooms
+        self._url_list = urls
+
 
 def tt(ndlist):
     return list(map(lambda n: (n[0], n[1]), ndlist))
