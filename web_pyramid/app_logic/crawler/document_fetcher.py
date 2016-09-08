@@ -1,8 +1,9 @@
 from datetime import timedelta
+
 from tornado import httpclient, gen, queues, locks, ioloop
 
-from crawler.links_params import links, cast_params
-from crawler.link_fetcher import LinkFetcher
+from web_pyramid.app_logic.crawler import LinkFetcher
+from web_pyramid.app_logic.crawler import links, cast_params
 
 
 class HtmlFetcher:

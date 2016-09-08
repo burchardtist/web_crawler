@@ -1,7 +1,8 @@
-import time
 import re
+import time
 from datetime import timedelta
-from crawler.links_params import links, cast_params
+
+from .links_params import links, cast_params
 
 try:
     from HTMLParser import HTMLParser

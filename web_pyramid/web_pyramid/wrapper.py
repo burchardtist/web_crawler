@@ -1,5 +1,5 @@
-from crawler.link_fetcher import LinkFetcher
-from crawler.links_params import links, cast_params
+from ..app_logic.crawler.link_fetcher import LinkFetcher
+from ..app_logic.crawler.links_params import links, cast_params
 
 
 def test():
@@ -16,3 +16,6 @@ def test():
 
     print(all_links[0])
     print(all_links[-1])
+
+if __name__ == '__main__':
+    test()
