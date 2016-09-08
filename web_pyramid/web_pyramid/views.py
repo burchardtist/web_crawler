@@ -2,9 +2,18 @@ from pyramid.view import view_config
 from .wrapper import wrap
 import json
 
+
 @view_config(route_name='home', renderer='templates/index.jinja2')
 def home_view(request):
-    return {'project': 'web_pyramid'}
+    sources = ['olx', 'gumtree', 'otodom', 'gratka']
+    offer_type = ['rent', 'sell']
+    estate_type = ['dom', 'mieszkanie']
+
+    return {
+        'sources': sources,
+        'offer_type': offer_type,
+        'estate_type': estate_type
+    }
 
 
 @view_config(route_name='fetcher', renderer='templates/fetcher.jinja2')
@@ -40,7 +49,7 @@ def fetcher_view(request):
                 params[param] = None
             else:
                 params[param] = request.GET.get(param)
-
+        print(params)
         links_list = wrap(**params)
 
     submitted = True if 'form.submitted' in request.GET else False
