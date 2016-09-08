@@ -178,6 +178,48 @@ class OtodomRoom:
         # TODO other, unused currently attributes
 
 
+class GratkaRoom:
+    def __init__(self, url, from_url=True):
+        self.attributes = {
+            'date_created': None,
+            'city': '',
+            'city_v': '',
+            'street': '',
+            'date_available': None,
+            'rooms_number': '',
+            'size': '',
+            'smoking': None,
+            'animals': None,
+
+            'description': '',
+            'price': '',
+            'title': '',
+            'user': ''
+        }
+
+        self.url = url
+        soup = BeautifulSoup(urllib.request.urlopen(self.url) if from_url else self.url, 'html.parser')
+
+        self.attributes['description'] = soup.select('.opis')
+        self.attributes['description'] = self.attributes['description'][0].text
+        self.attributes['description'] = re.sub('\s+', ' ', self.attributes['description'])
+        if self.attributes['description'].startswith(' Opis dodatkowy'):
+            self.attributes['description'] = self.attributes['description'][15:]
+
+        num_attributes = soup.select('#dane-podstawowe')[0].text.split('\n')
+        num_attributes = list(filter(lambda a: a != '', num_attributes))
+
+        for i in range(len(num_attributes)):
+            if num_attributes[i] == 'Cena':
+                self.attributes['price'] = to_float(num_attributes[i+1])
+            elif num_attributes[i] == 'Powierzchnia':
+                self.attributes['size'] = to_float(num_attributes[i+1])
+            elif num_attributes[i] == 'Liczba pokoi':
+                self.attributes['rooms_number'] == int(re.search('\d+', num_attributes[i+1]).group(0))
+
+        # TODO other, unused currently attributes
+
+
 if __name__ == '__main__':
     # url_ = 'http://www.gumtree.pl/a-mieszkania-i-domy-do-wynajecia/krakow/super-oferta-3+pokojowe-69-m2-ip-ul-turka-ok-saska-lipska-piekne-i-zadbane/1001721891170910514696009'
     # gt = GumtreeRoom(url_)
@@ -185,5 +227,10 @@ if __name__ == '__main__':
     # url_ = 'http://olx.pl/oferta/mieszkania-blisko-pg-i-gumed-2-niezalezne-pokoje-gdansk-brzezno-CID3-IDh3gTw.html#2244b69db2;promoted'
     # olx = OlxRoom(url_)
 
-    url_ = 'https://otodom.pl/oferta/piatkowo-batorego-63-1m-ii-pietro-bez-posrednikow-ID3133O.html#465ffef225'
-    od = OtodomRoom(url_)
+    # url_ = 'https://otodom.pl/oferta/piatkowo-batorego-63-1m-ii-pietro-bez-posrednikow-ID3133O.html#465ffef225'
+    # od = OtodomRoom(url_)
+
+    url_ = 'http://dom.gratka.pl/tresc/401-69501979-wielkopolskie-poznan-piatkowo-os-stefana-batorego.html'
+    gr = GratkaRoom(url_)
+
+    print('ok')
