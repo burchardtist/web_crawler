@@ -1,4 +1,5 @@
 import time
+import re
 
 from datetime import timedelta
 
@@ -79,12 +80,16 @@ class HtmlFetcher:
 
         # Start workers, then wait for the work queue to be empty.
         feeder()
-        for _ in range(self._concurrency):
+        for _ in range(self._concurrency if not re.search('gratka', self._url_list[0]) else 2):
             worker()
 
-        yield q.join(timeout=timedelta(seconds=300))
+        try:
+            yield q.join(timeout=timedelta(seconds=300 if not re.search('gratka', self._url_list[0]) else 1800))
 
-        self._html_list = html_list
+            self._html_list = html_list
+        except gen.TimeoutError:
+            self._html_list = []
+            print("Fetching from given provider did not succeed.")
 
     def get_documents(self):
         sync_client = httpclient.HTTPClient()

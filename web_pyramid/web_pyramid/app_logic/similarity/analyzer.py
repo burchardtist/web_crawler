@@ -4,13 +4,13 @@ import re
 from ..crawler.document_fetcher import HtmlFetcher
 from ..crawler.link_fetcher import LinkFetcher
 from ..crawler.links_params import links, cast_params
-from ..room_ad.room_ad import OlxRoom, GumtreeRoom, OtodomRoom
+from ..room_ad.room_ad import OlxRoom, GumtreeRoom, OtodomRoom, GratkaRoom
 
 from ..nlp_analyzer.tfidf_analyzer import TfidfSimilarity
 
 
 class Analyzer:
-    def __init__(self, similarity_threshold=0.6, price_difference=0.1, size_difference=0.1, room_difference=1):
+    def __init__(self, similarity_threshold=0.5, price_difference=0.1, size_difference=0.1, room_difference=1):
         self._url_list = {}
         self._rooms = []
 
@@ -50,6 +50,20 @@ class Analyzer:
                         url_list.append(url)
                     except:
                         continue
+            elif source == 'otodom':
+                for url in self._url_list[source]:
+                    try:
+                        self._rooms.append(OtodomRoom(url).attributes)
+                        url_list.append(url)
+                    except:
+                        continue
+            elif source == 'gratka':
+                for url in self._url_list[source]:
+                    try:
+                        self._rooms.append(GratkaRoom(url).attributes)
+                        url_list.append(url)
+                    except:
+                        continue
             else:
                 raise NotImplementedError()
 
@@ -84,6 +98,14 @@ class Analyzer:
                 for html in async_html_fetch.get_all_documents():
                     try:
                         self._rooms.append(OtodomRoom(html['html'], False).attributes)
+                        url_list.append(html['url'])
+                    except:
+                        continue
+            elif source == 'gratka':
+                async_html_fetch.load_all_documents(self._url_list[source])
+                for html in async_html_fetch.get_all_documents():
+                    try:
+                        self._rooms.append(GratkaRoom(html['html'], False).attributes)
                         url_list.append(html['url'])
                     except:
                         continue
@@ -155,6 +177,10 @@ class Analyzer:
 
     def get_links_list(self, similar_list):
         return list(map(lambda d: (self._url_list[d[0]], self._url_list[d[1]]), similar_list))
+
+    def get_links_list_with_titles(self, similar_list):
+        return list(map(lambda d: ({'url': self._url_list[d[0]], 'title': self._rooms[d[0]]['title']},
+                                   {'url': self._url_list[d[1]], 'title': self._rooms[d[1]]['title']}), similar_list))
 
     def print(self, similar_list):
         for pair in similar_list:
