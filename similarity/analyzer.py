@@ -9,7 +9,7 @@ from crawler.document_fetcher import HtmlFetcher
 
 
 class Analyzer:
-    def __init__(self, similarity_threshold=0.5, price_difference=0.1, size_difference=0.1, room_difference=1):
+    def __init__(self, similarity_threshold=0.6, price_difference=0.1, size_difference=0.1, room_difference=1):
         self._url_list = {}
         self._rooms = []
 
@@ -40,7 +40,6 @@ class Analyzer:
                     try:
                         self._rooms.append(OlxRoom(url).attributes)
                         url_list.append(url)
-                        print(len(url_list))
                     except:
                         continue
             elif source == 'gumtree':
@@ -48,7 +47,6 @@ class Analyzer:
                     try:
                         self._rooms.append(GumtreeRoom(url).attributes)
                         url_list.append(url)
-                        print(len(url_list))
                     except:
                         continue
             else:
@@ -70,7 +68,6 @@ class Analyzer:
                     try:
                         self._rooms.append(OlxRoom(html['html'], False).attributes)
                         url_list.append(html['url'])
-                        print(len(url_list))
                     except:
                         continue
             elif source == 'gumtree':
@@ -79,7 +76,6 @@ class Analyzer:
                     try:
                         self._rooms.append(GumtreeRoom(html['html'], False).attributes)
                         url_list.append(html['url'])
-                        print(len(url_list))
                     except:
                         continue
             else:
@@ -133,10 +129,7 @@ class Analyzer:
     def process_similarity(self, threshold=None):
         threshold = self.similarity_threshold if threshold is None or not isinstance(threshold, float) else threshold
 
-        print(len(self._rooms))
-        print(len(self._url_list))
         tfidf_analyzer = TfidfSimilarity()
-        print("Tfidf...")
         tfidf_analyzer.analyze_documents([e['description'] for e in self._rooms])
         similar_list = tfidf_analyzer.find_similar(threshold)
 

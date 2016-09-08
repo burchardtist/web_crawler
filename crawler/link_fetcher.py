@@ -14,7 +14,7 @@ from tornado import httpclient, gen, ioloop, queues, locks
 
 
 class LinkFetcher:
-    def __init__(self, base_fetch_url, base_url, offer_pattern, page_pattern, params, concurrency=4, verbose=0):
+    def __init__(self, base_fetch_url, base_url, offer_pattern, page_pattern, params, concurrency=10, verbose=0):
         self._base_fetch_url = base_fetch_url.format(**params)
 
         if params.get('offer_type', None) == 'all':
