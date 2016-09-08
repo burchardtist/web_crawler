@@ -1,12 +1,12 @@
 import pickle
 import re
 
-from crawler.document_fetcher import HtmlFetcher
-from crawler.link_fetcher import LinkFetcher
-from crawler.links_params import links, cast_params
-from room_ad.room_ad import OlxRoom, GumtreeRoom
+from ..crawler.document_fetcher import HtmlFetcher
+from ..crawler.link_fetcher import LinkFetcher
+from ..crawler.links_params import links, cast_params
+from ..room_ad.room_ad import OlxRoom, GumtreeRoom
 
-from web_pyramid.app_logic.nlp_analyzer import TfidfSimilarity
+from ..nlp_analyzer.tfidf_analyzer import TfidfSimilarity
 
 
 class Analyzer:

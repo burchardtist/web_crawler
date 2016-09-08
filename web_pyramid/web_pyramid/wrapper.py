@@ -1,5 +1,5 @@
-from ..app_logic.crawler.link_fetcher import LinkFetcher
-from ..app_logic.crawler.links_params import links, cast_params
+from .app_logic.crawler.link_fetcher import LinkFetcher
+from .app_logic.crawler.links_params import links, cast_params
 
 
 def test():
