@@ -1,21 +1,10 @@
-from .app_logic.crawler.link_fetcher import LinkFetcher
-from .app_logic.crawler.links_params import links, cast_params
+from .app_logic.similarity.analyzer import Analyzer
 
 
-def test():
-    params = {'city': 'poznan', 'estate_type': 'domy', 'offer_type': 'rent', 'voivodeship': 'wielkopolskie'}
-    all_links = {}
+def wrap(sources, offer_type, estate_type, city=None, voivodeship=None, similarity_threshold=0.6, room_difference=1,
+         size_difference=0.1, price_difference=0.1):
+    analyzer = Analyzer(similarity_threshold, price_difference, size_difference, room_difference)
+    analyzer.get_links(sources, offer_type, estate_type, city, voivodeship)
+    analyzer.get_rooms_async()
 
-    for page in ['olx', 'gratka', 'gumtree', 'otodom']:
-        l_f = LinkFetcher(links[page]['start_url'], links[page]['base_url'], links[page]['offer_pattern'],
-                          links[page]['page_pattern'], cast_params(page, **params), verbose=0)
-
-        l_f.process()
-        all_links[page] = l_f.get_collected_links()
-        print(len(all_links))
-
-    print(all_links[0])
-    print(all_links[-1])
-
-if __name__ == '__main__':
-    test()
+    return analyzer.get_links_list(analyzer.process_similarity())
