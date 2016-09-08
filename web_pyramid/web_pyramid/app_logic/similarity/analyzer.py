@@ -178,6 +178,10 @@ class Analyzer:
     def get_links_list(self, similar_list):
         return list(map(lambda d: (self._url_list[d[0]], self._url_list[d[1]]), similar_list))
 
+    def get_links_list_with_titles(self, similar_list):
+        return list(map(lambda d: ({'url': self._url_list[d[0]], 'title': self._rooms[d[0]]['title']},
+                                   {'url': self._url_list[d[1]], 'title': self._rooms[d[1]]['title']}), similar_list))
+
     def print(self, similar_list):
         for pair in similar_list:
             print(self._url_list[pair[0]], self._url_list[pair[1]], self._rooms[pair[0]]['price'],

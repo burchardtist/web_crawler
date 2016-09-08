@@ -7,4 +7,4 @@ def wrap(sources, offer_type, estate_type, city=None, voivodeship=None, similari
     analyzer.get_links(sources, offer_type, estate_type, city, voivodeship)
     analyzer.get_rooms_async()
 
-    return analyzer.get_links_list(analyzer.process_similarity())
+    return analyzer.get_links_list_with_titles(analyzer.process_similarity())
