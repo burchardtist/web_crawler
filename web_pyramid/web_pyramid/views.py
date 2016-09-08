@@ -42,14 +42,10 @@ def fetcher_view(request):
                 params[param] = request.GET.get(param)
 
         links_list = wrap(**params)
-        links = []
-        for link in links_list:
-            links.append({
-                'url': link[0]
-            })
+
     submitted = True if 'form.submitted' in request.GET else False
     return {
-        'links': links_list if submitted else json.dumps(links),
+        'links': links_list if submitted else json.dumps(links_list),
         'submitted': submitted
     }
 
