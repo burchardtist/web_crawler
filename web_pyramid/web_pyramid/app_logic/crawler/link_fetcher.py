@@ -29,7 +29,7 @@ class LinkFetcher:
         self._page_pattern = page_pattern.format(**params)
 
         self._links = []
-        self._concurrency = concurrency
+        self._concurrency = concurrency if not re.search('gratka', self._base_url) else 3
 
         self._verbose = verbose
 

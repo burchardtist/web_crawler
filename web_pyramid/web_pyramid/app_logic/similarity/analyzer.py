@@ -4,7 +4,7 @@ import re
 from ..crawler.document_fetcher import HtmlFetcher
 from ..crawler.link_fetcher import LinkFetcher
 from ..crawler.links_params import links, cast_params
-from ..room_ad.room_ad import OlxRoom, GumtreeRoom, OtodomRoom
+from ..room_ad.room_ad import OlxRoom, GumtreeRoom, OtodomRoom, GratkaRoom
 
 from ..nlp_analyzer.tfidf_analyzer import TfidfSimilarity
 
@@ -50,6 +50,20 @@ class Analyzer:
                         url_list.append(url)
                     except:
                         continue
+            elif source == 'otodom':
+                for url in self._url_list[source]:
+                    try:
+                        self._rooms.append(OtodomRoom(url).attributes)
+                        url_list.append(url)
+                    except:
+                        continue
+            elif source == 'gratka':
+                for url in self._url_list[source]:
+                    try:
+                        self._rooms.append(GratkaRoom(url).attributes)
+                        url_list.append(url)
+                    except:
+                        continue
             else:
                 raise NotImplementedError()
 
@@ -84,6 +98,14 @@ class Analyzer:
                 for html in async_html_fetch.get_all_documents():
                     try:
                         self._rooms.append(OtodomRoom(html['html'], False).attributes)
+                        url_list.append(html['url'])
+                    except:
+                        continue
+            elif source == 'gratka':
+                async_html_fetch.load_all_documents(self._url_list[source])
+                for html in async_html_fetch.get_all_documents():
+                    try:
+                        self._rooms.append(GratkaRoom(html['html'], False).attributes)
                         url_list.append(html['url'])
                     except:
                         continue
