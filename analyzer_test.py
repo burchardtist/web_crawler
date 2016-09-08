@@ -10,7 +10,8 @@ if __name__ == '__main__':
 
     if not load:
         print('Collecting links...')
-        a.get_links(['olx', 'gumtree'], 'rent', 'mieszkania', 'Poznan', 'wielkopolskie')  # , 'gumtree', 'otodom', 'gratka'
+        a.get_links(['olx', 'gumtree'], 'rent', 'mieszkania', 'Poznan', 'wielkopolskie')
+        # , 'gumtree', 'otodom', 'gratka'
         print('Getting rooms')
         a.get_rooms_async()
 

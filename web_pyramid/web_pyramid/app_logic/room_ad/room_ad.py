@@ -175,6 +175,9 @@ class OtodomRoom:
             elif na.startswith('liczba pokoi'):
                 self.attributes['rooms_number'] = int(re.search('\d+', na).group(0))
 
+        self.attributes['title'] = soup.select('.col-md-offer-content')[0].contents[3].text  # brzydkie i jak zmienią
+                                                                                             # to przestanie działać :|
+
         # TODO other, unused currently attributes
 
 
@@ -217,6 +220,9 @@ class GratkaRoom:
             elif num_attributes[i] == 'Liczba pokoi':
                 self.attributes['rooms_number'] == int(re.search('\d+', num_attributes[i+1]).group(0))
 
+        self.attributes['title'] = soup.select('#karta-naglowek')[0].contents[1].contents[1].contents[1].text
+        self.attributes['title'] = re.sub('\s+', ' ', self.attributes['title']).strip()
+
         # TODO other, unused currently attributes
 
 
@@ -227,8 +233,8 @@ if __name__ == '__main__':
     # url_ = 'http://olx.pl/oferta/mieszkania-blisko-pg-i-gumed-2-niezalezne-pokoje-gdansk-brzezno-CID3-IDh3gTw.html#2244b69db2;promoted'
     # olx = OlxRoom(url_)
 
-    # url_ = 'https://otodom.pl/oferta/piatkowo-batorego-63-1m-ii-pietro-bez-posrednikow-ID3133O.html#465ffef225'
-    # od = OtodomRoom(url_)
+    url_ = 'https://otodom.pl/oferta/piatkowo-batorego-63-1m-ii-pietro-bez-posrednikow-ID3133O.html#465ffef225'
+    od = OtodomRoom(url_)
 
     url_ = 'http://dom.gratka.pl/tresc/401-69501979-wielkopolskie-poznan-piatkowo-os-stefana-batorego.html'
     gr = GratkaRoom(url_)
