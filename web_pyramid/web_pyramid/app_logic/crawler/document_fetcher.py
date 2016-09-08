@@ -83,7 +83,7 @@ class HtmlFetcher:
         for _ in range(self._concurrency if not re.search('gratka', self._url_list[0]) else 3):
             worker()
 
-        yield q.join(timeout=timedelta(seconds=300))
+        yield q.join(timeout=timedelta(seconds=300 if not re.search('gratka', self._url_list[0]) else 900))
 
         self._html_list = html_list
 
