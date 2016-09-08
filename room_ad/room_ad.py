@@ -5,7 +5,18 @@ from datetime import datetime
 
 
 class GumtreeRoom:
-    attributes = {
+    attributes_types = {
+        'date_created': 0,
+        'city': 1,
+        'date_available': 3,
+        'rooms_number': 5,
+        'size': 7,
+        'smoking': 10,
+        'animals': 9,
+    }
+
+    def __init__(self, url, from_url=True):
+        self.attributes = {
             'date_created': None,
             'city': '',
             'city_v': '',
@@ -20,21 +31,10 @@ class GumtreeRoom:
             'price': '',
             'title': '',
             'user': ''
-    }
+        }
 
-    attributes_types = {
-        'date_created': 0,
-        'city': 1,
-        'date_available': 3,
-        'rooms_number': 5,
-        'size': 7,
-        'smoking': 10,
-        'animals': 9,
-    }
-
-    def __init__(self, url):
         self.url = url
-        soup = BeautifulSoup(urllib.request.urlopen(self.url), 'html.parser')
+        soup = BeautifulSoup(urllib.request.urlopen(self.url) if from_url else self.url, 'html.parser')
 
         raw_attributes = soup.select('.selMenu .attribute')
         for attr, i in self.attributes_types.items():
@@ -75,7 +75,8 @@ class GumtreeRoom:
 
 
 class OlxRoom:
-    attributes = {
+    def __init__(self, url, from_url=True):
+        self.attributes = {
             'date_created': None,
             'city': '',
             'city_v': '',
@@ -90,11 +91,10 @@ class OlxRoom:
             'price': '',
             'title': '',
             'user': ''
-    }
+        }
 
-    def __init__(self, url):
         self.url = url
-        soup = BeautifulSoup(urllib.request.urlopen(self.url), 'html.parser')
+        soup = BeautifulSoup(urllib.request.urlopen(self.url) if from_url else self.url, 'html.parser')
 
         raw_items = soup.select('.item')
 
