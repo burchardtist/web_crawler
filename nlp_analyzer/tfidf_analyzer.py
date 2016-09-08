@@ -23,5 +23,7 @@ class TfidfSimilarity:
 
         return similar_list
 
+    def sort_by_similarity(self, similar_list):
+        values = {(s[0], s[1]): self._matrix[s[0], s[1]] for s in similar_list}
 
-
+        return sorted(values, key=lambda k: values[k], reverse=True)
