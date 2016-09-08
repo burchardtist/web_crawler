@@ -10,7 +10,7 @@ from ..nlp_analyzer.tfidf_analyzer import TfidfSimilarity
 
 
 class Analyzer:
-    def __init__(self, similarity_threshold=0.6, price_difference=0.1, size_difference=0.1, room_difference=1):
+    def __init__(self, similarity_threshold=0.5, price_difference=0.1, size_difference=0.1, room_difference=1):
         self._url_list = {}
         self._rooms = []
 
