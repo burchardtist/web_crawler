@@ -10,9 +10,14 @@ from ..nlp_analyzer.tfidf_analyzer import TfidfSimilarity
 
 
 class Analyzer:
-    def __init__(self):
+    def __init__(self, similarity_threshold=0.6, price_difference=0.1, size_difference=0.1, room_difference=1):
         self._url_list = {}
         self._rooms = []
+
+        self.similarity_threshold = similarity_threshold
+        self.price_difference = price_difference
+        self.size_difference = size_difference
+        self.room_difference = room_difference
 
     def get_links(self, sources, offer_type, estate_type, city=None, voivodeship=None):
         self._url_list = {}
@@ -36,7 +41,6 @@ class Analyzer:
                     try:
                         self._rooms.append(OlxRoom(url).attributes)
                         url_list.append(url)
-                        print(len(url_list))
                     except:
                         continue
             elif source == 'gumtree':
@@ -44,7 +48,6 @@ class Analyzer:
                     try:
                         self._rooms.append(GumtreeRoom(url).attributes)
                         url_list.append(url)
-                        print(len(url_list))
                     except:
                         continue
             else:
@@ -66,7 +69,6 @@ class Analyzer:
                     try:
                         self._rooms.append(OlxRoom(html['html'], False).attributes)
                         url_list.append(html['url'])
-                        print(len(url_list))
                     except:
                         continue
             elif source == 'gumtree':
@@ -75,7 +77,6 @@ class Analyzer:
                     try:
                         self._rooms.append(GumtreeRoom(html['html'], False).attributes)
                         url_list.append(html['url'])
-                        print(len(url_list))
                     except:
                         continue
             else:
@@ -126,31 +127,22 @@ class Analyzer:
 
         return abs(a - b) <= allowed_difference
 
-    def process_similarity(self, threshold=0.95):
-        print(len(self._rooms))
-        print(len(self._url_list))
+    def process_similarity(self, threshold=None):
+        threshold = self.similarity_threshold if threshold is None or not isinstance(threshold, float) else threshold
+
         tfidf_analyzer = TfidfSimilarity()
-        print("Tfidf...")
         tfidf_analyzer.analyze_documents([e['description'] for e in self._rooms])
         similar_list = tfidf_analyzer.find_similar(threshold)
 
-        similar_list = list(filter(lambda r: self.values_difference(self._rooms, 'price', r[0], r[1]), similar_list))
-        similar_list = list(filter(lambda r: self.values_difference(self._rooms, 'size', r[0], r[1]), similar_list))
-        similar_list = list(filter(lambda r: self.values_difference_int(self._rooms, 'rooms_number', r[0], r[1]),
-                                   similar_list))
+        similar_list = list(filter(lambda r: self.values_difference(self._rooms, 'price', r[0], r[1],
+                                                                    self.price_difference), similar_list))
+        similar_list = list(filter(lambda r: self.values_difference(self._rooms, 'size', r[0], r[1],
+                                                                    self.size_difference), similar_list))
+        similar_list = list(filter(lambda r: self.values_difference_int(self._rooms, 'rooms_number', r[0], r[1],
+                                                                        self.room_difference), similar_list))
 
-        # similar_list_urls = list(map(lambda d: (self._url_list[d[0]], self._url_list[d[1]]), similar_list))
+        similar_list = tfidf_analyzer.sort_by_similarity(similar_list)
 
-        '''
-        for pair in similar_list:
-            u_1 = self._url_list[pair[0]]
-            u_2 = self._url_list[pair[1]]
-            r_1 = self._rooms[pair[0]]
-            r_2 = self._rooms[pair[1]]
-            print(self._url_list[pair[0]], self._url_list[pair[1]], self._rooms[pair[0]]['price'],
-                  self._rooms[pair[1]]['price'], self._rooms[pair[0]]['size'], self._rooms[pair[1]]['size'],
-                  self._rooms[pair[0]]['rooms_number'], self._rooms[pair[1]]['rooms_number'])
-        '''
         return similar_list
 
     def get_links_list(self, similar_list):
@@ -196,10 +188,10 @@ if __name__ == '__main__':
         urls.close()
 
     print('Similarity...')
-    a_1 = set(tt(a.process_similarity()))
+    a_1 = set(tt(a.process_similarity(0.6)))
     # print(len(a.process_similarity(0.9)))
     # print(len(a.process_similarity(0.85)))
-    a_2 = set(tt(a.process_similarity(0.8)))
+    a_2 = set(tt(a.process_similarity(0.5)))
 
     l = list(a_2.difference(a_1))
     a.print(l)

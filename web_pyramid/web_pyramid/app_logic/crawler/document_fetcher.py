@@ -1,3 +1,5 @@
+import time
+
 from datetime import timedelta
 
 from tornado import httpclient, gen, queues, locks, ioloop
@@ -7,7 +9,7 @@ from .links_params import links, cast_params
 
 
 class HtmlFetcher:
-    def __init__(self, concurrency=4):
+    def __init__(self, concurrency=10):
         self._url_list = []
         self._html_list = []
         self._concurrency = concurrency
@@ -76,9 +78,7 @@ class HtmlFetcher:
                 q.put(url)
 
         # Start workers, then wait for the work queue to be empty.
-        print("Started feeding")
         feeder()
-        print("Starting workers")
         for _ in range(self._concurrency):
             worker()
 
