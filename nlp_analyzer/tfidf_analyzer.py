@@ -13,6 +13,8 @@ class TfidfSimilarity:
         self._matrix = tf_idf.fit_transform(document_set)
         self._matrix = np.dot(self._matrix, self._matrix.T)
 
+        print(self._matrix.shape)
+
     def find_similar(self, threshold=0.8):
         similar_list = np.argwhere(self._matrix > threshold)
 

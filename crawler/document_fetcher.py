@@ -59,7 +59,7 @@ class HtmlFetcher:
                 html = yield self.get_html(current_url)
 
                 collection_lock.acquire()
-                html_list.append(html)  # possible asynchronous access to synchronous object
+                html_list.append({'url': current_url, 'html': html})  # possible asynchronous access to synchronous object
                 collection_lock.release()
             finally:
                 q.task_done()
